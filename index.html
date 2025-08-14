@@ -160,43 +160,76 @@
   /* Result */
   .result{
     display:none;
-    margin:20px 0;
+    margin:24px 0;
+    text-align:center;
+    opacity:0;
+    transform:translateY(20px);
+    animation:resultSlideIn .8s ease-out forwards;
+  }
+  @keyframes resultSlideIn{
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
   }
   .win-text{
-    font-size:1.4rem;
-    font-weight:800;
+    font-size:1.6rem;
+    font-weight:900;
     background:linear-gradient(45deg, var(--saffron), var(--gold), var(--green));
     -webkit-background-clip:text;
     background-clip:text;
     -webkit-text-fill-color:transparent;
-    margin:12px 0;
-    animation:glow 1.5s ease-in-out 3;
+    margin:16px 0 20px;
+    animation:winGlow 2s ease-in-out infinite;
+    text-shadow:0 4px 8px rgba(0,0,0,.3);
+    letter-spacing:.5px;
   }
-  @keyframes glow{
-    0%,100%{ filter:drop-shadow(0 0 0 rgba(255,215,0,0)); }
-    50%{ filter:drop-shadow(0 0 20px rgba(255,215,0,.8)); }
+  @keyframes winGlow{
+    0%,100%{ filter:drop-shadow(0 0 0 rgba(255,215,0,0)) scale(1); }
+    50%{ filter:drop-shadow(0 0 25px rgba(255,215,0,.8)) scale(1.05); }
   }
   
   .claim-btn{
     display:none;
-    margin-top:20px;
+    margin:24px auto 0;
     text-decoration:none;
-    padding:16px 28px;
+    padding:18px 32px;
     background:linear-gradient(135deg, var(--saffron), var(--gold));
     color:#000;
-    font-weight:800;
-    font-size:1.05rem;
-    border-radius:14px;
-    box-shadow:0 10px 30px rgba(255,153,51,.45);
-    transition:all .3s ease;
-    letter-spacing:.6px;
+    font-weight:900;
+    font-size:1.1rem;
+    border-radius:16px;
+    box-shadow:0 12px 35px rgba(255,153,51,.5);
+    transition:all .4s cubic-bezier(.25,.46,.45,.94);
+    letter-spacing:.8px;
     text-transform:uppercase;
-    border:2px solid var(--gold);
+    border:3px solid var(--gold);
+    position:relative;
+    overflow:hidden;
+    transform:translateY(10px);
+    opacity:0;
+    animation:claimBtnAppear 1s ease-out .5s forwards;
+  }
+  .claim-btn::before{
+    content:"";
+    position:absolute;
+    top:0;left:-100%;right:0;bottom:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+    transition:left .6s ease;
+  }
+  .claim-btn:hover::before{
+    left:100%;
   }
   .claim-btn:hover{
-    transform:translateY(-3px);
-    box-shadow:0 15px 40px rgba(255,153,51,.65);
+    transform:translateY(-4px) scale(1.05);
+    box-shadow:0 18px 50px rgba(255,153,51,.7);
     border-color:var(--white);
+  }
+  @keyframes claimBtnAppear{
+    to{
+      transform:translateY(0);
+      opacity:1;
+    }
   }
   
   /* Confetti */
@@ -226,7 +259,7 @@
       <h1>🇮🇳 Independence Day Special 🇮🇳</h1>
       <div class="sub">
         <span class="flag-icon">🎉</span>
-        75+ Years of Freedom
+        79 Years of Freedom
         <span class="flag-icon">🎉</span>
       </div>
       
@@ -248,7 +281,7 @@
       
       <div class="result" id="result">
         <div class="win-text">🎊 Congratulations! You won ₹100! 🎊</div>
-        <a href="claim.html" class="claim-btn" id="claimBtn" target="_blank">Claim Your Independence Day Reward</a>
+        <a href="claim.html" class="claim-btn" id="claimBtn">Claim Your Independence Day Reward</a>
       </div>
       
       <div class="independence-msg">
@@ -305,41 +338,44 @@
     // Show result after all boxes revealed
     setTimeout(() => {
       showWin();
-    }, 1500);
+      result.style.display = 'block';
+    }, 2000);
   }
   
   function showWin() {
-    result.style.display = 'block';
     claimBtn.style.display = 'inline-block';
     
-    // Patriotic confetti
-    burstConfetti(150);
+    // Enhanced patriotic confetti with sparkles
+    burstConfetti(200);
+    setTimeout(() => burstConfetti(100), 800); // Second wave
   }
   
   function burstConfetti(count) {
     const container = document.getElementById('confetti');
-    const colors = ['#ff9933', '#ffffff', '#138808', '#ffd700']; // Saffron, White, Green, Gold
+    const colors = ['#ff9933', '#ffffff', '#138808', '#ffd700', '#ff6b35']; // Added orange accent
     
     for(let i = 0; i < count; i++) {
       const confetti = document.createElement('i');
       const left = Math.random() * 100;
-      const delay = Math.random() * 1000;
-      const duration = 1500 + Math.random() * 1000;
-      const size = 6 + Math.random() * 8;
+      const delay = Math.random() * 1500;
+      const duration = 2000 + Math.random() * 1500;
+      const size = 8 + Math.random() * 12;
       const color = colors[i % colors.length];
       
       confetti.style.left = left + '%';
-      confetti.style.top = '-10vh';
+      confetti.style.top = '-15vh';
       confetti.style.width = size + 'px';
-      confetti.style.height = (size * 1.5) + 'px';
+      confetti.style.height = (size * 1.4) + 'px';
       confetti.style.background = color;
       confetti.style.animationDelay = delay + 'ms';
       confetti.style.animationDuration = duration + 'ms';
-      confetti.style.borderRadius = '2px';
+      confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
+      confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+      confetti.style.boxShadow = `0 0 ${size/2}px ${color}40`;
       
       container.appendChild(confetti);
       
-      setTimeout(() => confetti.remove(), duration + delay + 100);
+      setTimeout(() => confetti.remove(), duration + delay + 200);
     }
   }
 })();
