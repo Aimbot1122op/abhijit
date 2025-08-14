@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Independence Day Special - Pick & Win ₹100</title>
+<style>
+  :root{
+    --saffron:#ff9933;
+    --white:#ffffff;
+    --green:#138808;
+    --navy:#000080;
+    --card:#0b1220ee;
+    --text:#ffffff;
+    --muted:#d1d5db;
+    --shadow:rgba(0,0,0,.35);
+    --gold:#ffd700;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(135deg, var(--saffron) 0%, var(--white) 35%, var(--white) 65%, var(--green) 100%);
+    color:var(--text);
+    min-height:100svh;
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .wrap{
+    width:100%;
+    max-width:520px;
+  }
+  .card{
+    background:linear-gradient(180deg, rgba(11,18,32,.95), rgba(11,18,32,.98));
+    border:2px solid var(--gold);
+    border-radius:20px;
+    box-shadow:0 20px 60px var(--shadow);
+    padding:28px 24px 32px;
+    text-align:center;
+    backdrop-filter: blur(8px);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--saffron), var(--white), var(--green));
+  }
+  h1{
+    font-size:1.8rem;margin:0 0 12px;font-weight:900;
+    background:linear-gradient(45deg, var(--saffron), var(--gold), var(--green));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:none;
+    letter-spacing:.8px;
+  }
+  .sub{
+    color:var(--muted);font-size:1.05rem;margin-bottom:28px;
+    text-shadow:0 2px 4px rgba(0,0,0,.5);
+    font-weight:500;
+  }
+  .flag-icon{
+    font-size:2rem;margin:0 8px;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  }
+  
+  /* Box Grid */
+  .box-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin:20px 0 24px;
+    max-width:320px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .box{
+    aspect-ratio:1;
+    background:linear-gradient(135deg, #1e293b, #334155);
+    border:3px solid var(--gold);
+    border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    font-size:1.2rem;font-weight:800;
+    color:var(--gold);
+    transition:all .4s cubic-bezier(.25,.46,.45,.94);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+  }
+  .box::before{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(45deg, transparent, rgba(255,215,0,.1), transparent);
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .box:hover{
+    transform:translateY(-6px) scale(1.08);
+    box-shadow:0 20px 40px rgba(255,215,0,.35);
+    border-color:var(--saffron);
+  }
+  .box:hover::before{
+    opacity:1;
+  }
+  .box.clicked{
+    pointer-events:none;
+    animation:zoomReveal 1.5s cubic-bezier(.25,.46,.45,.94) forwards;
+  }
+  .box.winner{
+    background:linear-gradient(135deg, var(--saffron), var(--gold), var(--green));
+    color:#000;
+    font-size:1.5rem;
+    font-weight:900;
+    border-color:var(--white);
+    box-shadow:0 0 60px rgba(255,215,0,.9), 0 20px 40px rgba(255,153,51,.4);
+    text-shadow:0 2px 4px rgba(0,0,0,.3);
+  }
+  .box.loser{
+    background:linear-gradient(135deg, #374151, #4b5563);
+    color:#9ca3af;
+    opacity:.4;
+    transform:scale(.95);
+  }
+  
+  @keyframes zoomReveal{
+    0%{ 
+      transform:scale(1) rotate(0deg); 
+      opacity:1;
+    }
+    25%{ 
+      transform:scale(1.3) rotate(5deg); 
+      opacity:.8;
+    }
+    50%{ 
+      transform:scale(.8) rotate(-3deg); 
+      opacity:.9;
+    }
+    75%{ 
+      transform:scale(1.4) rotate(2deg); 
+      opacity:.7;
+    }
+    100%{ 
+      transform:scale(1.2) rotate(0deg); 
+      opacity:1;
+    }
+  }
+  
+  .game-instruction{
+    color:var(--muted);
+    font-size:.95rem;
+    margin-bottom:16px;
+    opacity:.9;
+  }
+  
+  /* Result */
+  .result{
+    display:none;
+    margin:20px 0;
+  }
+  .win-text{
+    font-size:1.4rem;
+    font-weight:800;
+    background:linear-gradient(45deg, var(--saffron), var(--gold), var(--green));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin:12px 0;
+    animation:glow 1.5s ease-in-out 3;
+  }
+  @keyframes glow{
+    0%,100%{ filter:drop-shadow(0 0 0 rgba(255,215,0,0)); }
+    50%{ filter:drop-shadow(0 0 20px rgba(255,215,0,.8)); }
+  }
+  
+  .claim-btn{
+    display:none;
+    margin-top:20px;
+    text-decoration:none;
+    padding:16px 28px;
+    background:linear-gradient(135deg, var(--saffron), var(--gold));
+    color:#000;
+    font-weight:800;
+    font-size:1.05rem;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(255,153,51,.45);
+    transition:all .3s ease;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    border:2px solid var(--gold);
+  }
+  .claim-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 15px 40px rgba(255,153,51,.65);
+    border-color:var(--white);
+  }
+  
+  /* Confetti */
+  .confetti{
+    position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1000;
+  }
+  .confetti i{
+    position:absolute;width:8px;height:12px;opacity:0;
+    animation:fall 2000ms linear forwards;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-10vh) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(110vh) rotate(720deg); opacity:0; }
+  }
+  
+  .independence-msg{
+    font-size:.9rem;
+    color:var(--muted);
+    margin-top:16px;
+    font-style:italic;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🇮🇳 Independence Day Special 🇮🇳</h1>
+      <div class="sub">
+        <span class="flag-icon">🎉</span>
+        75+ Years of Freedom
+        <span class="flag-icon">🎉</span>
+      </div>
+      
+      <div class="game-instruction">
+        Pick any box and win guaranteed prizes!
+      </div>
+      
+      <div class="box-grid" id="boxGrid">
+        <div class="box" data-prize="₹50">?</div>
+        <div class="box" data-prize="₹75">?</div>
+        <div class="box" data-prize="₹100">?</div>
+        <div class="box" data-prize="₹25">?</div>
+        <div class="box" data-prize="₹200">?</div>
+        <div class="box" data-prize="₹30">?</div>
+        <div class="box" data-prize="₹40">?</div>
+        <div class="box" data-prize="₹60">?</div>
+        <div class="box" data-prize="₹90">?</div>
+      </div>
+      
+      <div class="result" id="result">
+        <div class="win-text">🎊 Congratulations! You won ₹100! 🎊</div>
+        <a href="claim.html" class="claim-btn" id="claimBtn" target="_blank">Claim Your Independence Day Reward</a>
+      </div>
+      
+      <div class="independence-msg">
+        "Freedom is not given, it is taken" - Celebrate with us! 🇮🇳
+      </div>
+    </div>
+  </div>
+  
+  <div class="confetti" id="confetti"></div>
+
+<script>
+(function(){
+  const boxes = document.querySelectorAll('.box');
+  const result = document.getElementById('result');
+  const claimBtn = document.getElementById('claimBtn');
+  let gameStarted = false;
+  
+  // Always win ₹100 (force win on 3rd box for better UX)
+  const winningBox = boxes[2]; // 3rd box
+  winningBox.dataset.prize = "₹100";
+  
+  boxes.forEach(box => {
+    box.addEventListener('click', () => {
+      if (gameStarted) return;
+      gameStarted = true;
+      
+      // Disable all boxes
+      boxes.forEach(b => b.style.pointerEvents = 'none');
+      
+      // Add clicked animation to selected box
+      box.classList.add('clicked');
+      
+      setTimeout(() => {
+        revealBoxes(box);
+      }, 600);
+    });
+  });
+  
+  function revealBoxes(clickedBox) {
+    boxes.forEach((box, index) => {
+      setTimeout(() => {
+        if (box === clickedBox) {
+          // Winner box
+          box.classList.add('winner');
+          box.textContent = "₹100";
+        } else {
+          // Other boxes
+          box.classList.add('loser');
+          box.textContent = box.dataset.prize;
+        }
+      }, index * 150);
+    });
+    
+    // Show result after all boxes revealed
+    setTimeout(() => {
+      showWin();
+    }, 1500);
+  }
+  
+  function showWin() {
+    result.style.display = 'block';
+    claimBtn.style.display = 'inline-block';
+    
+    // Patriotic confetti
+    burstConfetti(150);
+  }
+  
+  function burstConfetti(count) {
+    const container = document.getElementById('confetti');
+    const colors = ['#ff9933', '#ffffff', '#138808', '#ffd700']; // Saffron, White, Green, Gold
+    
+    for(let i = 0; i < count; i++) {
+      const confetti = document.createElement('i');
+      const left = Math.random() * 100;
+      const delay = Math.random() * 1000;
+      const duration = 1500 + Math.random() * 1000;
+      const size = 6 + Math.random() * 8;
+      const color = colors[i % colors.length];
+      
+      confetti.style.left = left + '%';
+      confetti.style.top = '-10vh';
+      confetti.style.width = size + 'px';
+      confetti.style.height = (size * 1.5) + 'px';
+      confetti.style.background = color;
+      confetti.style.animationDelay = delay + 'ms';
+      confetti.style.animationDuration = duration + 'ms';
+      confetti.style.borderRadius = '2px';
+      
+      container.appendChild(confetti);
+      
+      setTimeout(() => confetti.remove(), duration + delay + 100);
+    }
+  }
+})();
+</script>
+</body>
+</html>
